@@ -17,7 +17,7 @@ using ZmodFiles;
 /// <summary>
 /// see bottom of file for developer notes
 /// </summary>
-namespace JNB
+namespace JupyterNotebook
 {
 	public class NotebookInfo
 	{
@@ -125,7 +125,7 @@ namespace JNB
 	/// </summary>
 	/// <typeparam name="string">key</typeparam>
 	/// <typeparam name="NotebookInfo">info</typeparam>
-	public class JupyterNotebook : IEnumerable<KeyValuePair<string, NotebookInfo>>
+	public class Notebook : IEnumerable<KeyValuePair<string, NotebookInfo>>
 	{
 		private static ConcurrentDictionary<string, NotebookInfo> notebooks =
 			 new ConcurrentDictionary<string, NotebookInfo>();
@@ -326,7 +326,7 @@ namespace JNB
 		}
 		public static void StopAll()
 		{
-			var q = from _ in JupyterNotebook.List(true)
+			var q = from _ in Notebook.List(true)
 					  where _.Info.Running
 					  select _;
 			foreach (var nb in q.ToList())
@@ -348,7 +348,7 @@ namespace JNB
 		/// <param name="search">i.e. "HelloClass.ipynb"</param>
 		/// <param name="refresh"></param>
 		/// <returns>the first match found</returns>
-		public static JupyterNotebook Find(string search, bool refresh = true)
+		public static Notebook Find(string search, bool refresh = true)
 		{
 			var name = new RaiFile(search).Name;
 			if (refresh)
@@ -356,13 +356,13 @@ namespace JNB
 			var q = from _ in notebooks
 					  where _.Key.Contains(name) || _.Value.Name.Contains(name) || _.Value.NotebookDir.Contains(name)
 					  select _.Value;
-			return q.Count() > 0 ? new JupyterNotebook((NotebookInfo)q.First()) : null;
+			return q.Count() > 0 ? new Notebook((NotebookInfo)q.First()) : null;
 		}
-		public static List<JupyterNotebook> List(bool refresh = true)
+		public static List<Notebook> List(bool refresh = true)
 		{
 			if (refresh)
 				Refresh();
-			var q = from _ in notebooks select new JupyterNotebook(_.Value);
+			var q = from _ in notebooks select new Notebook(_.Value);
 			return q.ToList();
 		}
 		/// <summary>
@@ -391,18 +391,18 @@ namespace JNB
 						name = f.NameWithExtension,
 						notebook_dir = f.Path
 					};
-					new JupyterNotebook(new NotebookInfo(obj)); // inserts a notebook into the static Dictionary notebooks
+					new Notebook(new NotebookInfo(obj)); // inserts a notebook into the static Dictionary notebooks
 				}
 			}
 		}
-		public JupyterNotebook(NotebookInfo info)
+		public Notebook(NotebookInfo info)
 		{
 			// http://localhost:8890/?token=0da788a158d220e91c783e1014b0f7ba21c829ba07974692
 			//info.Name = new RaiFile(info.Name).Name;    // remove extension ipynb
 			this[info.Name] = info;
 			Name = info.Name;
 		}
-		public JupyterNotebook(JObject jo)
+		public Notebook(JObject jo)
 		{
 			var info = new NotebookInfo(jo);
 			info.Name = new RaiFile(info.Name).Name;    // remove extension ipynb
