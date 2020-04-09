@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OsLib\OsLib.csproj" />
-    <ProjectReference Include="..\ZmodFiles\ZmodFiles.csproj" />
+    <ProjectReference Include="..\MlwFiles\MlwFiles.csproj" />
   </ItemGroup>
 
 </Project>
